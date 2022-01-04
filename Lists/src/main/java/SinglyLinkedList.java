@@ -67,7 +67,7 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index >= this.size || index < 0) {
+        if (index < 0 || index >= this.size) {
             throw new IndexOutOfBoundsException();
         }
         Node<E> node = this.head;
@@ -149,6 +149,21 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
+        Node<E> newNode = new Node<>(element);
+        if (index == 0) {
+            newNode.next = this.head;
+            this.head = newNode;
+        } else {
+            Node<E> node = this.head;
+            for (int i = 0; i < index; i++) {
+                node = node.next;
+            }
+            newNode.next = node.next;
+            node.next = newNode;
+        }
 
         return element;
 
@@ -156,20 +171,55 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public boolean replace(E oldElement, E newElement) {
+        Node<E> node = this.head;
+        while (node != null) {
+            if (node.element.equals(oldElement)) {
+                node.element = newElement;
+                return true;
+            }
+            node = node.next;
+        }
         return false;
     }
 
 
     @Override
     public boolean replaceAll(E oldElement, E newElement) {
-        return false;
+        Node<E> node = this.head;
+        boolean success = false;
+        while (node != null) {
+            if (node.element.equals(oldElement)) {
+                node.element = newElement;
+                success = true;
+            }
+            node = node.next;
+        }
+        return success;
     }
 
     //DELETE
 
     @Override
     public E remove(int index) {
-        return null;
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            E element = this.head.element;
+            this.head = this.head.next;
+            this.size--;
+            return element;
+        }
+
+        Node<E> node = this.head;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
+        }
+
+        E element = node.next.element;
+        node.next = node.next.next;
+        this.size--;
+        return element;
     }
 
     @Override
@@ -179,6 +229,8 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public void clear() {
+        this.head = null;
+        this.size = 0;
     }
 
     @Override
