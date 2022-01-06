@@ -1,240 +1,52 @@
-import java.util.Collection;
 import java.util.Iterator;
 
-public class SinglyLinkedList<E> implements List<E> {
-    private Node<E> head;
-    private int size;
-
-    private static class Node<E> {
-        private E element;
-        private Node<E> next;
-
-        public Node(E element) {
-            this.element = element;
-            this.next = null;
-        }
-    }
-
+public interface List<E> {
     //CREATE
 
-    @Override
-    public boolean add(E element) {
-        return addLast(element);
-    }
+    boolean add(E element);
 
-    @Override
-    public boolean addFirst(E element) {
-        Node<E> newNode = new Node<>(element);
-        if (this.size == 0) {
-            this.head = newNode;
-        } else {
-            newNode.next = this.head;
-            this.head = newNode;
-        }
-        this.size++;
-        return true;
+    boolean add(int index, E element);
 
-    }
+    boolean addFirst(E element);
 
-    @Override
-    public boolean addLast(E element) {
-        Node<E> newNode = new Node<>(element);
+    boolean addLast(E element);
 
-        if (this.size == 0) {
-            this.head = newNode;
-        } else {
-            Node<E> node = this.head;
-            while (node.next != null) {
-                node = node.next;
-            }
-            node.next = newNode;
-        }
-        this.size++;
-        return true;
-    }
 
     //RETRIEVE
 
-    @Override
-    public int size() {
-        return this.size();
-    }
+    E get(int index);
 
-    @Override
-    public boolean isEmpty() {
-        return this.size == 0;
-    }
+    int indexOf(E element);
 
-    @Override
-    public E get(int index) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
-        }
-        Node<E> node = this.head;
-        int i = 0;
-        while (i != index) {
-            i++;
-            node = node.next;
-        }
+    int lastIndexOf(E element);
 
-        return node.element;
+    boolean isEmpty();
 
-    }
+    Object[] toArray();
 
-    @Override
-    public boolean contains(Object o) {
-        Node<E> node = this.head;
+    Iterator<E> iterator();
 
-        while (node != null) {
-            if (node.element.equals(o)) {
-                return true;
-            }
-            node = node.next;
-        }
-        return false;
-    }
+    int size();
 
+    boolean contains(Object o);
 
-    @Override
-    public int indexOf(E element) {
-        Node<E> node = this.head;
-        int index = 0;
-
-        while (node != null) {
-            if (node.element.equals(element)) {
-                return index;
-            }
-            node = node.next;
-            index++;
-        }
-
-        return -1;
-    }
-
-    @Override
-    public int lastIndexOf(E element) {
-        int lastIndex = -1;
-
-        int index = 0;
-        Node<E> node = new Node<>(element);
-        while (node != null) {
-            if (node.element.equals(element)) {
-                lastIndex = index;
-            }
-            node = node.next;
-            index++;
-        }
-
-        return lastIndex;
-    }
-
-    @Override
-    public Iterator<E> iterator() {
-        return null;
-    }
-
-    @Override
-    public Object[] toArray() {
-        Object[] arr = new Object[this.size];
-        Node<E> node = this.head;
-        for (int i = 0; i < this.size; i++) {
-            arr[i] = node.element;
-            node = node.next;
-        }
-
-        return arr;
-    }
 
     //UPDATE
 
-    @Override
-    public E set(int index, E element) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
-        }
-        Node<E> newNode = new Node<>(element);
-        if (index == 0) {
-            newNode.next = this.head;
-            this.head = newNode;
-        } else {
-            Node<E> node = this.head;
-            for (int i = 0; i < index; i++) {
-                node = node.next;
-            }
-            newNode.next = node.next;
-            node.next = newNode;
-        }
+    E set(int index, E element);
 
-        return element;
+    boolean replace(E oldElement, E newElement);
 
-    }
-
-    @Override
-    public boolean replace(E oldElement, E newElement) {
-        Node<E> node = this.head;
-        while (node != null) {
-            if (node.element.equals(oldElement)) {
-                node.element = newElement;
-                return true;
-            }
-            node = node.next;
-        }
-        return false;
-    }
-
-
-    @Override
-    public boolean replaceAll(E oldElement, E newElement) {
-        Node<E> node = this.head;
-        boolean success = false;
-        while (node != null) {
-            if (node.element.equals(oldElement)) {
-                node.element = newElement;
-                success = true;
-            }
-            node = node.next;
-        }
-        return success;
-    }
+    boolean replaceAll(E oldElement, E newElement);
 
     //DELETE
 
-    @Override
-    public E remove(int index) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
-        }
-        if (index == 0) {
-            E element = this.head.element;
-            this.head = this.head.next;
-            this.size--;
-            return element;
-        }
+    E remove(int index);
 
-        Node<E> node = this.head;
-        for (int i = 0; i < index; i++) {
-            node = node.next;
-        }
+    boolean remove(Object element);
 
-        E element = node.next.element;
-        node.next = node.next.next;
-        this.size--;
-        return element;
-    }
+    void clear();
 
-    @Override
-    public boolean remove(Object element) {
-        return false;
-    }
+    boolean removeAll(E element);
 
-    @Override
-    public void clear() {
-        this.head = null;
-        this.size = 0;
-    }
-
-    @Override
-    public boolean removeAll(E element) {
-        return false;
-    }
 }
