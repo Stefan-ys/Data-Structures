@@ -1,4 +1,3 @@
-import java.util.Collection;
 import java.util.Iterator;
 
 public class SinglyLinkedList<E> implements List<E> {
@@ -20,6 +19,31 @@ public class SinglyLinkedList<E> implements List<E> {
     @Override
     public boolean add(E element) {
         return addLast(element);
+    }
+
+    @Override
+    public boolean add(int index, E element) {
+        if (index < 0 || index > this.size) {
+            throw new IndexOutOfBoundsException();
+        }
+        if (index == 0) {
+            return addFirst(element);
+        }
+        if (index == this.size) {
+            return addLast(element);
+        }
+        Node<E> node = this.head;
+        int i = 0;
+        while (i++ < index) {
+            node = node.next;
+        }
+        Node<E> newNode = new Node<>(element);
+        Node<E> tmp = node.next;
+        node.next = newNode;
+        newNode.next = tmp;
+
+        this.size++;
+        return true;
     }
 
     @Override
@@ -57,7 +81,7 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public int size() {
-        return this.size();
+        return this.size;
     }
 
     @Override
@@ -116,7 +140,7 @@ public class SinglyLinkedList<E> implements List<E> {
         int lastIndex = -1;
 
         int index = 0;
-        Node<E> node = new Node<>(element);
+        Node<E> node = this.head;
         while (node != null) {
             if (node.element.equals(element)) {
                 lastIndex = index;
@@ -130,7 +154,21 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public Iterator<E> iterator() {
-        return null;
+        return new Iterator<E>() {
+            Node<E> node = head;
+
+            @Override
+            public boolean hasNext() {
+                return this.node.next != null;
+            }
+
+            @Override
+            public E next() {
+                E element = this.node.element;
+                this.node = this.node.next;
+                return element;
+            }
+        };
     }
 
     @Override
