@@ -4,7 +4,7 @@ import org.junit.Test;
 
 
 public class SinglyLinkedListTest extends TestCase {
-    private static final int EVEN = 100;
+    private static final int EVEN = 10;
     private static final int UNEVEN = 101;
 
     private List<Integer> createList(int n) {
@@ -23,7 +23,11 @@ public class SinglyLinkedListTest extends TestCase {
             Assert.assertEquals(i, (int) list.get(i));
         }
 
-        list.clear();
+    }
+
+    @Test
+    public void testTestAdd() {
+        List<Integer> list = new SinglyLinkedList<>();
 
         for (int i = 0; i < 9; i++) {
             if (i < 3) {
@@ -43,7 +47,6 @@ public class SinglyLinkedListTest extends TestCase {
                 Assert.assertEquals(42, (int) list.get(i));
             }
         }
-
     }
 
     @Test
@@ -58,22 +61,6 @@ public class SinglyLinkedListTest extends TestCase {
         Assert.assertEquals(EVEN - 1, (int) list.get(EVEN - 1));
     }
 
-    @Test
-    public void testSize() {
-        List<Integer> list = new SinglyLinkedList<>();
-        Assert.assertEquals(0, list.size());
-        list = createList(EVEN);
-        Assert.assertEquals(EVEN, list.size());
-
-    }
-
-    @Test
-    public void testIsEmpty() {
-        List<Integer> list = new SinglyLinkedList<>();
-        Assert.assertTrue(list.isEmpty());
-        list.add(1);
-        Assert.assertFalse(list.isEmpty());
-    }
 
     @Test
     public void testContains() {
@@ -115,36 +102,113 @@ public class SinglyLinkedListTest extends TestCase {
     public void testSet() {
         List<Integer> list = createList(EVEN);
         for (int i = 0; i < list.size(); i++) {
-            list.set(i, 42);
+            Assert.assertEquals(i, (int) list.set(i, 42));
         }
         for (int i = 0; i < list.size(); i++) {
-            Assert.assertEquals(41, (int) list.get(i));
+            Assert.assertEquals(42, (int) list.get(i));
         }
     }
 
     @Test
     public void testReplace() {
+        List<Integer> list = new SinglyLinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                list.add(1);
+            } else {
+                list.add(2);
+            }
+        }
+        list.replace(1, 3);
 
+
+        Assert.assertEquals(3, (int) list.get(0));
+        for (int i = 1; i < list.size(); i++) {
+            if (i % 2 == 0) {
+                Assert.assertEquals(1, (int) list.get(i));
+            } else {
+                Assert.assertEquals(2, (int) list.get(i));
+            }
+        }
     }
 
     @Test
     public void testReplaceAll() {
+        List<Integer> list = new SinglyLinkedList<>();
+        for (int i = 0; i < 10; i++) {
+            if (i % 2 == 0) {
+                list.add(1);
+            } else {
+                list.add(2);
+            }
+        }
+        list.replaceAll(1, 3);
 
+        for (int i = 0; i < list.size(); i++) {
+            if (i % 2 == 0) {
+                Assert.assertEquals(3, (int) list.get(i));
+            } else {
+                Assert.assertEquals(2, (int) list.get(i));
+            }
+        }
     }
 
     @Test
     public void testRemove() {
+        List<Integer> list = createList(EVEN);
+
+        while (!list.isEmpty()) {
+            Integer e = list.remove(0);
+            Assert.assertFalse(list.contains(e));
+        }
+
+        list = createList(EVEN);
+        while ((!list.isEmpty())) {
+            Integer e = list.remove(Math.max(0, list.size() / 2 - 1));
+            Assert.assertFalse(list.contains(e));
+        }
+
+        list = createList(EVEN);
+        while ((!list.isEmpty())) {
+            Integer e = list.remove(list.size() - 1);
+            Assert.assertFalse(list.contains(e));;
+        }
+
+        Assert.assertTrue(list.isEmpty());
     }
 
     @Test
     public void testTestRemove() {
+        List<Integer> list = createList(EVEN);
+        for (int i = 0; i < EVEN; i++) {
+            Assert.assertTrue(list.remove((Object) i));
+        }
+        Assert.assertTrue(list.isEmpty());
     }
 
     @Test
     public void testClear() {
+        List<Integer> list = createList(EVEN);
+        Assert.assertEquals(EVEN, list.size());
+        Assert.assertFalse(list.isEmpty());
+        list.clear();
+        Assert.assertEquals(0, list.size());
+        Assert.assertTrue(list.isEmpty());
     }
 
     @Test
     public void testRemoveAll() {
+        List<Integer> list = new SinglyLinkedList<>();
+
+        for (int i = 0; i < 20; i++) {
+            if (i % 2 == 0) {
+                list.add(42);
+            } else {
+                list.add(i);
+            }
+        }
+        list.removeAll(42);
+        Assert.assertFalse(list.contains(42));
+        Assert.assertEquals(10, list.size());
     }
 }
