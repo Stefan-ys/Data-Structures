@@ -4,6 +4,11 @@ public class SinglyLinkedList<E> implements List<E> {
     private Node<E> head;
     private int size;
 
+    public SinglyLinkedList() {
+        this.head = null;
+        this.size = 0;
+    }
+
     private static class Node<E> {
         private E element;
         private Node<E> next;
@@ -33,14 +38,15 @@ public class SinglyLinkedList<E> implements List<E> {
             return addLast(element);
         }
         Node<E> node = this.head;
-        int i = 0;
-        while (i++ < index) {
+
+        int i = 1;
+        while (i < index) {
             node = node.next;
+            i++;
         }
         Node<E> newNode = new Node<>(element);
-        Node<E> tmp = node.next;
+        newNode.next = node.next;
         node.next = newNode;
-        newNode.next = tmp;
 
         this.size++;
         return true;
@@ -49,13 +55,11 @@ public class SinglyLinkedList<E> implements List<E> {
     @Override
     public boolean addFirst(E element) {
         Node<E> newNode = new Node<>(element);
-        if (this.size == 0) {
-            this.head = newNode;
-        } else {
-            newNode.next = this.head;
-            this.head = newNode;
-        }
+
+        newNode.next = this.head;
+        this.head = newNode;
         this.size++;
+
         return true;
 
     }
@@ -91,9 +95,7 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public E get(int index) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         Node<E> node = this.head;
         int i = 0;
         while (i != index) {
@@ -106,11 +108,11 @@ public class SinglyLinkedList<E> implements List<E> {
     }
 
     @Override
-    public boolean contains(Object o) {
+    public boolean contains(E element) {
         Node<E> node = this.head;
 
         while (node != null) {
-            if (node.element.equals(o)) {
+            if (node.element.equals(element)) {
                 return true;
             }
             node = node.next;
@@ -159,7 +161,7 @@ public class SinglyLinkedList<E> implements List<E> {
 
             @Override
             public boolean hasNext() {
-                return this.node.next != null;
+                return this.node != null;
             }
 
             @Override
@@ -175,8 +177,8 @@ public class SinglyLinkedList<E> implements List<E> {
     public Object[] toArray() {
         Object[] arr = new Object[this.size];
         Node<E> node = this.head;
-        for (int i = 0; i < this.size; i++) {
-            arr[i] = node.element;
+        for (int i = 0; i < arr.length; i++) {
+            arr[i] = (E) node.element;
             node = node.next;
         }
 
@@ -187,28 +189,21 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public E set(int index, E element) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
+        checkIndex(index);
+        Node<E> node = this.head;
+        for (int i = 0; i < index; i++) {
+            node = node.next;
         }
-        Node<E> newNode = new Node<>(element);
-        if (index == 0) {
-            newNode.next = this.head;
-            this.head = newNode;
-        } else {
-            Node<E> node = this.head;
-            for (int i = 0; i < index; i++) {
-                node = node.next;
-            }
-            newNode.next = node.next;
-            node.next = newNode;
-        }
+        E e = node.element;
+        node.element = element;
 
-        return element;
+        return e;
 
     }
 
     @Override
     public boolean replace(E oldElement, E newElement) {
+        ensureNonEmpty();
         Node<E> node = this.head;
         while (node != null) {
             if (node.element.equals(oldElement)) {
@@ -223,30 +218,29 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public boolean replaceAll(E oldElement, E newElement) {
+        ensureNonEmpty();
         Node<E> node = this.head;
-        boolean success = false;
+        boolean flag = false;
         while (node != null) {
             if (node.element.equals(oldElement)) {
                 node.element = newElement;
-                success = true;
+                flag = true;
             }
             node = node.next;
         }
-        return success;
+        return flag;
     }
 
     //DELETE
 
     @Override
     public E remove(int index) {
-        if (index < 0 || index >= this.size) {
-            throw new IndexOutOfBoundsException();
-        }
+        checkIndex(index);
         if (index == 0) {
-            E element = this.head.element;
-            this.head = this.head.next;
-            this.size--;
-            return element;
+            return removeFirst();
+        }
+        if (index == this.size - 1) {
+            return removeLast();
         }
 
         Node<E> node = this.head;
@@ -256,13 +250,65 @@ public class SinglyLinkedList<E> implements List<E> {
 
         E element = node.next.element;
         node.next = node.next.next;
+
         this.size--;
         return element;
     }
 
     @Override
     public boolean remove(Object element) {
+        ensureNonEmpty();
+        if (this.head.element.equals(element)) {
+            this.head = this.head.next;
+            this.size--;
+            return true;
+        }
+        Node<E> node = this.head;
+
+
+        while (node.next != null) {
+            if (node.next.element.equals(element)) {
+                node.next = node.next.next;
+                this.size--;
+                return true;
+            }
+            node = node.next;
+        }
         return false;
+
+    }
+
+    @Override
+    public E removeFirst() {
+        ensureNonEmpty();
+        Node<E> tmp = this.head;
+        this.head = head.next;
+        this.size--;
+        return tmp.element;
+
+    }
+
+    @Override
+    public E removeLast() {
+        ensureNonEmpty();
+
+        if (this.size == 1) {
+            E element = this.head.element;
+            this.clear();
+            return element;
+        }
+
+        Node<E> prev = this.head;
+        Node<E> node = this.head.next;
+        while (node.next != null) {
+            node = node.next;
+            prev = prev.next;
+        }
+
+        E element = node.element;
+        prev.next = null;
+        this.size--;
+        return element;
     }
 
     @Override
@@ -273,6 +319,66 @@ public class SinglyLinkedList<E> implements List<E> {
 
     @Override
     public boolean removeAll(E element) {
-        return false;
+        ensureNonEmpty();
+        if (this.size == 1) {
+            if (this.head.element.equals(element)) {
+                this.clear();
+                return true;
+            }
+            return false;
+        }
+        boolean flag = false;
+
+        while (this.head.element.equals(element)) {
+            this.head = this.head.next;
+            this.size--;
+            flag = true;
+        }
+
+        Node<E> prev = this.head;
+        Node<E> node = this.head.next;
+
+        while (node != null) {
+            if (node.element.equals(element)) {
+                prev.next = node.next;
+                node = prev.next;
+                flag = true;
+                this.size--;
+            } else {
+                prev = prev.next;
+                node = node.next;
+            }
+        }
+
+
+        return flag;
     }
+
+    //HELPERS
+
+    public String printList() {
+        ensureNonEmpty();
+        StringBuilder stringBuilder = new StringBuilder(this.size);
+
+        Iterator<E> iterator = this.iterator();
+
+        while (iterator.hasNext()) {
+            stringBuilder.append(iterator.next()).append(" ");
+        }
+        return stringBuilder.toString().trim();
+    }
+
+    public void ensureNonEmpty() {
+        if (this.size == 0) {
+            throw new IllegalStateException();
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException();
+        }
+    }
+
+
 }
