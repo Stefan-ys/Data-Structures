@@ -1,214 +1,251 @@
-import junit.framework.TestCase;
-import org.junit.Assert;
-import org.junit.Test;
 
+import java.util.Arrays;
+import java.util.Iterator;
 
-public class SinglyLinkedListTest extends TestCase {
-    private static final int EVEN = 10;
-    private static final int UNEVEN = 101;
+public class ArrayList<E> implements List<E> {
+    private static final int DEFAULT_CAPACITY = 64;
+    private Object[] elements;
+    private int size;
 
-    private List<Integer> createList(int n) {
-        List<Integer> list = new SinglyLinkedList<>();
-        for (int i = 0; i < n; i++) {
-            list.add(i);
-        }
-        return list;
+    public ArrayList() {
+        this.elements = new Object[DEFAULT_CAPACITY];
     }
 
-    @Test
-    public void testAdd() {
-        List<Integer> list = createList(EVEN);
-
-        for (int i = 0; i < EVEN; i++) {
-            Assert.assertEquals(i, (int) list.get(i));
-        }
-
+    public ArrayList(int size) {
+        this.elements = new Object[size];
     }
 
-    @Test
-    public void testTestAdd() {
-        List<Integer> list = new SinglyLinkedList<>();
+    //CREATE
 
-        for (int i = 0; i < 9; i++) {
-            if (i < 3) {
-                list.add(0, 13);
-            } else if (i < 6) {
-                list.add(list.size(), 42);
-            } else {
-                list.add(list.size() / 2 - 1, 69);
+    @Override
+    public boolean add(E element) {
+        grow();
+        this.elements[this.size++] = element;
+
+        return true;
+    }
+
+    @Override
+    public boolean add(int index, E element) {
+        if (index < 0 || index > this.size) {
+            throw new IllegalStateException();
+        }
+        grow();
+
+        shiftRight(index);
+        elements[index] = element;
+
+
+        return true;
+    }
+
+    @Override
+    public boolean addFirst(E element) {
+        return add(0, element);
+    }
+
+    @Override
+    public boolean addLast(E element) {
+        return add(element);
+    }
+
+    //RETRIEVE
+
+    @Override
+    public E get(int index) {
+        checkIndex(index);
+
+        return (E) this.elements[index];
+    }
+
+    @Override
+    public int indexOf(E element) {
+        for (int i = 0; i < this.size; i++) {
+            if (this.elements[i].equals(element)) {
+                return i;
             }
         }
-        for (int i = 0; i < 9; i++) {
-            if (i < 3) {
-                Assert.assertEquals(13, (int) list.get(i));
-            } else if (i < 6) {
-                Assert.assertEquals(69, (int) list.get(i));
-            } else {
-                Assert.assertEquals(42, (int) list.get(i));
+        return -1;
+    }
+
+    @Override
+    public int lastIndexOf(E element) {
+        for (int i = this.size - 1; i >= 0; i--) {
+            if (this.elements[i].equals(element)) {
+                return i;
             }
         }
+        return -1;
     }
 
-    @Test
-    public void testAddFirst() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertEquals(0, (int) list.get(0));
+    @Override
+    public boolean isEmpty() {
+        return this.size == 0;
     }
 
-    @Test
-    public void testAddLast() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertEquals(EVEN - 1, (int) list.get(EVEN - 1));
+    @Override
+    public Object[] toArray() {
+        return Arrays.copyOf(this.elements, this.size);
     }
 
+    @Override
+    public Iterator<E> iterator() {
+        return new Iterator<E>() {
+            private int index = 0;
 
-    @Test
-    public void testContains() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertFalse(list.contains(EVEN));
-        Assert.assertTrue(list.contains(EVEN - 1));
+            @Override
+            public boolean hasNext() {
+                return this.index < size;
+            }
+
+            @Override
+            public E next() {
+                return (E) elements[index++];
+            }
+        };
     }
 
-    @Test
-    public void testIndexOf() {
-        List<Integer> list = createList(EVEN);
-        for (int i = 0; i < EVEN; i++) {
-            Assert.assertEquals(i, list.indexOf(i));
-        }
+    @Override
+    public int size() {
+        return this.size;
     }
 
-    @Test
-    public void testLastIndexOf() {
-        List<Integer> list = new SinglyLinkedList<>();
-        for (int i = 0; i < 5; i++) {
-            list.add(42);
-        }
-        list.add(13);
-        Assert.assertEquals(-1, list.lastIndexOf(69));
-        Assert.assertEquals(4, list.lastIndexOf(42));
-    }
-
-
-    @Test
-    public void testToArray() {
-        List<Integer> list = createList(EVEN);
-        Integer[] arr = (Integer[]) list.toArray();
-        for (int i = 0; i < EVEN; i++) {
-            Assert.assertEquals(arr[i], list.get(i));
-        }
-    }
-
-    @Test
-    public void testSet() {
-        List<Integer> list = createList(EVEN);
-        for (int i = 0; i < list.size(); i++) {
-            Assert.assertEquals(i, (int) list.set(i, 42));
-        }
-        for (int i = 0; i < list.size(); i++) {
-            Assert.assertEquals(42, (int) list.get(i));
-        }
-    }
-
-    @Test
-    public void testReplace() {
-        List<Integer> list = new SinglyLinkedList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                list.add(1);
-            } else {
-                list.add(2);
+    @Override
+    public boolean contains(Object o) {
+        for (int i = 0; i < this.size; i++) {
+            if (this.elements[i].equals(o)) {
+                return true;
             }
         }
-        list.replace(1, 3);
+        return false;
+    }
 
+    //UPDATE
 
-        Assert.assertEquals(3, (int) list.get(0));
-        for (int i = 1; i < list.size(); i++) {
-            if (i % 2 == 0) {
-                Assert.assertEquals(1, (int) list.get(i));
-            } else {
-                Assert.assertEquals(2, (int) list.get(i));
+    @Override
+    public E set(int index, E element) {
+        checkIndex(index);
+        E e = (E) this.elements[index];
+        this.elements[index] = element;
+        return e;
+    }
+
+    @Override
+    public boolean replace(E oldElement, E newElement) {
+        for (int i = 0; i < this.size; i++) {
+            if (this.elements[i].equals(oldElement)) {
+                this.elements[i] = newElement;
+                return true;
             }
         }
+        return false;
     }
 
-    @Test
-    public void testReplaceAll() {
-        List<Integer> list = new SinglyLinkedList<>();
-        for (int i = 0; i < 10; i++) {
-            if (i % 2 == 0) {
-                list.add(1);
-            } else {
-                list.add(2);
+    @Override
+    public boolean replaceAll(E oldElement, E newElement) {
+        boolean flag = false;
+        for (int i = 0; i < this.size; i++) {
+            if (this.elements[i].equals(oldElement)) {
+                this.elements[i] = newElement;
+                flag = true;
             }
         }
-        list.replaceAll(1, 3);
+        return flag;
+    }
 
-        for (int i = 0; i < list.size(); i++) {
-            if (i % 2 == 0) {
-                Assert.assertEquals(3, (int) list.get(i));
-            } else {
-                Assert.assertEquals(2, (int) list.get(i));
+    //DELETE
+
+    @Override
+    public E remove(int index) {
+        checkIndex(index);
+        E element = (E) this.elements[index];
+        shiftLeft(index);
+
+        shrink();
+        return element;
+    }
+
+    @Override
+    public boolean remove(Object element) {
+        for (int i = 0; i < this.size; i++) {
+            if (elements[i].equals(element)) {
+                shiftLeft(i);
+                shrink();
+                return true;
             }
         }
+        return false;
     }
 
-    @Test
-    public void testRemove() {
-        List<Integer> list = createList(EVEN);
-
-        while (!list.isEmpty()) {
-            Integer e = list.remove(0);
-            Assert.assertFalse(list.contains(e));
+    @Override
+    public E removeFirst() {
+        if (isEmpty()) {
+            throw new IllegalStateException();
         }
-
-        list = createList(EVEN);
-        while ((!list.isEmpty())) {
-            Integer e = list.remove(Math.max(0, list.size() / 2 - 1));
-            Assert.assertFalse(list.contains(e));
-        }
-
-        list = createList(EVEN);
-        while ((!list.isEmpty())) {
-            Integer e = list.remove(list.size() - 1);
-            Assert.assertFalse(list.contains(e));;
-        }
-
-        Assert.assertTrue(list.isEmpty());
+        E element = (E) this.elements[0];
+        shiftLeft(0);
+        return null;
     }
 
-    @Test
-    public void testTestRemove() {
-        List<Integer> list = createList(EVEN);
-        for (int i = 0; i < EVEN; i++) {
-            Assert.assertTrue(list.remove((Object) i));
+    @Override
+    public E removeLast() {
+        if (isEmpty()) {
+            throw new IllegalStateException();
         }
-        Assert.assertTrue(list.isEmpty());
+
+        E element = (E) this.elements[this.size - 1];
+        shiftLeft(this.size - 1);
+        return element;
     }
 
-    @Test
-    public void testClear() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertEquals(EVEN, list.size());
-        Assert.assertFalse(list.isEmpty());
-        list.clear();
-        Assert.assertEquals(0, list.size());
-        Assert.assertTrue(list.isEmpty());
+    @Override
+    public void clear() {
+        this.elements = new Object[DEFAULT_CAPACITY];
+        this.size = 0;
+
     }
 
-    @Test
-    public void testRemoveAll() {
-        List<Integer> list = new SinglyLinkedList<>();
-
-        for (int i = 0; i < 20; i++) {
-            if (i % 2 == 0) {
-                list.add(42);
-            } else {
-                list.add(i);
+    @Override
+    public boolean removeAll(E element) {
+        boolean flag = false;
+        for (int i = 0; i < this.size; i++) {
+            if (this.elements[i].equals(element)) {
+                shiftLeft(i);
+                flag = true;
             }
         }
-        list.removeAll(42);
-        Assert.assertFalse(list.contains(42));
-        Assert.assertEquals(10, list.size());
+        shrink();
+        return flag;
     }
+
+    //HELPERS
+    private void grow() {
+        if (this.size == this.elements.length) {
+            this.elements = Arrays.copyOf(this.elements, this.elements.length * 2);
+        }
+    }
+
+    private void shrink() {
+        if (this.size <= this.elements.length / 4) {
+            this.elements = Arrays.copyOf(this.elements, this.elements.length / 2);
+        }
+    }
+
+    private void checkIndex(int index) {
+        if (index < 0 || index >= this.size) {
+            throw new IndexOutOfBoundsException("IndexOutBounds");
+        }
+    }
+
+    private void shiftRight(int index) {
+        System.arraycopy(elements, index, elements, index + 1, this.size - index);
+        this.size++;
+    }
+
+    private void shiftLeft(int index) {
+        System.arraycopy(this.elements, index + 1, this.elements, index, this.size - index);
+        this.size--;
+    }
+
+
 }
