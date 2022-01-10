@@ -356,18 +356,6 @@ public class SinglyLinkedList<E> implements List<E> {
 
     //HELPERS
 
-    public String printList() {
-        ensureNonEmpty();
-        StringBuilder stringBuilder = new StringBuilder(this.size);
-
-        Iterator<E> iterator = this.iterator();
-
-        while (iterator.hasNext()) {
-            stringBuilder.append(iterator.next()).append(" ");
-        }
-        return stringBuilder.toString().trim();
-    }
-
     public void ensureNonEmpty() {
         if (this.size == 0) {
             throw new IllegalStateException();
