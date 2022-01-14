@@ -10,6 +10,8 @@ public interface Queue<E> {
 
     //RETRIEVE
 
+    //CREATE
+
     E peek();
 
     int size();
@@ -18,7 +20,9 @@ public interface Queue<E> {
 
     boolean contains(Object o);
 
-    Object[] toArray();
+    Object[]
+
+    toArray();
 
     Iterator<E> iterator();
 
