@@ -3,8 +3,8 @@ import org.junit.Assert;
 import org.junit.Test;
 
 public class ArrayListTest extends TestCase {
-    private static final int EVEN = 10;
-    private static final int UNEVEN = 101;
+    private static final int SIZE = 10;
+
 
     private List<Integer> createList(int n) {
         List<Integer> list = new ArrayList<>();
@@ -16,9 +16,9 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testAdd() {
-        List<Integer> list = createList(EVEN);
+        List<Integer> list = createList(SIZE);
 
-        for (int i = 0; i < EVEN; i++) {
+        for (int i = 0; i < SIZE; i++) {
             Assert.assertEquals(i, (int) list.get(i));
         }
 
@@ -52,28 +52,28 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testAddFirst() {
-        List<Integer> list = createList(EVEN);
+        List<Integer> list = createList(SIZE);
         Assert.assertEquals(0, (int) list.get(0));
     }
 
     @Test
     public void testAddLast() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertEquals(EVEN - 1, (int) list.get(EVEN - 1));
+        List<Integer> list = createList(SIZE);
+        Assert.assertEquals(SIZE - 1, (int) list.get(SIZE - 1));
     }
 
 
     @Test
     public void testContains() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertFalse(list.contains(EVEN));
-        Assert.assertTrue(list.contains(EVEN - 1));
+        List<Integer> list = createList(SIZE);
+        Assert.assertFalse(list.contains(SIZE));
+        Assert.assertTrue(list.contains(SIZE - 1));
     }
 
     @Test
     public void testIndexOf() {
-        List<Integer> list = createList(EVEN);
-        for (int i = 0; i < EVEN; i++) {
+        List<Integer> list = createList(SIZE);
+        for (int i = 0; i < SIZE; i++) {
             Assert.assertEquals(i, list.indexOf(i));
         }
     }
@@ -92,18 +92,18 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testToArray() {
-        List<Integer> list = createList(EVEN);
+        List<Integer> list = createList(SIZE);
 
         Object[] arr = list.toArray();
 
-        for (int i = 0; i < EVEN; i++) {
+        for (int i = 0; i < SIZE; i++) {
             Assert.assertEquals(arr[i], list.get(i));
         }
     }
 
     @Test
     public void testSet() {
-        List<Integer> list = createList(EVEN);
+        List<Integer> list = createList(SIZE);
         for (int i = 0; i < list.size(); i++) {
             Assert.assertEquals(i, (int) list.set(i, 42));
         }
@@ -158,20 +158,20 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testRemove() {
-        List<Integer> list = createList(EVEN);
+        List<Integer> list = createList(SIZE);
 
         while (!list.isEmpty()) {
             Integer e = list.remove(0);
             Assert.assertFalse(list.contains(e));
         }
 
-        list = createList(EVEN);
+        list = createList(SIZE);
         while ((!list.isEmpty())) {
             Integer e = list.remove(Math.max(0, list.size() / 2 - 1));
             Assert.assertFalse(list.contains(e));
         }
 
-        list = createList(EVEN);
+        list = createList(SIZE);
         while ((!list.isEmpty())) {
             Integer e = list.remove(list.size() - 1);
             Assert.assertFalse(list.contains(e));
@@ -182,8 +182,8 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testTestRemove() {
-        List<Integer> list = createList(EVEN);
-        for (int i = 0; i < EVEN; i++) {
+        List<Integer> list = createList(SIZE);
+        for (int i = 0; i < SIZE; i++) {
             Assert.assertTrue(list.remove((Object) i));
         }
         Assert.assertTrue(list.isEmpty());
@@ -191,8 +191,8 @@ public class ArrayListTest extends TestCase {
 
     @Test
     public void testClear() {
-        List<Integer> list = createList(EVEN);
-        Assert.assertEquals(EVEN, list.size());
+        List<Integer> list = createList(SIZE);
+        Assert.assertEquals(SIZE, list.size());
         Assert.assertFalse(list.isEmpty());
         list.clear();
         Assert.assertEquals(0, list.size());
