@@ -7,11 +7,13 @@ public class ArrayDeque<E> implements Deque<E> {
     private Object[] elements;
     private int head;
     private int tail;
+    private int size;
 
     public ArrayDeque() {
         this.elements = new Object[CAPACITY];
         this.head = elements.length / 2;
         this.tail = elements.length / 2;
+        this.size = 0;
     }
 
     // CREATE
@@ -28,16 +30,24 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public boolean addFirst(E element) {
+        if (!this.isEmpty()) {
+            this.head--;
+        }
         setCapacity();
-        this.elements[--this.head] = element;
+        this.elements[this.head] = element;
+        this.size++;
         return true;
     }
 
 
     @Override
     public boolean addLast(E element) {
+        if (!this.isEmpty()) {
+            this.tail++;
+        }
         setCapacity();
-        this.elements[this.tail++] = element;
+        this.elements[this.tail] = element;
+        this.size++;
         return true;
     }
 
@@ -67,27 +77,27 @@ public class ArrayDeque<E> implements Deque<E> {
 
     @Override
     public int size() {
-        return this.tail - this.head;
+        return this.size;
     }
 
     @Override
     public boolean isEmpty() {
-        return this.head == this.tail;
+        return this.size == 0;
     }
 
     @Override
     public Iterator<E> iterator() {
         return new Iterator<E>() {
-            int index = 0;
+            int index = head;
 
             @Override
             public boolean hasNext() {
-                return this.index < size();
+                return this.index <= tail;
             }
 
             @Override
             public E next() {
-                E element = (E) elements[head + index];
+                E element = (E) elements[index];
                 index++;
                 return element;
             }
@@ -115,6 +125,7 @@ public class ArrayDeque<E> implements Deque<E> {
         }
         E element = (E) this.elements[this.head];
         this.head++;
+        this.size--;
         return element;
 
     }
@@ -126,6 +137,7 @@ public class ArrayDeque<E> implements Deque<E> {
         }
         E element = (E) this.elements[this.tail];
         this.tail--;
+        this.size--;
         return element;
     }
 
@@ -134,6 +146,7 @@ public class ArrayDeque<E> implements Deque<E> {
         this.elements = new Object[CAPACITY];
         this.head = elements.length / 2;
         this.tail = elements.length / 2;
+        this.size = 0;
     }
 
 
@@ -141,12 +154,15 @@ public class ArrayDeque<E> implements Deque<E> {
 
 
     private void setCapacity() {
-        if (this.head == 1 || this.tail == this.elements.length - 2) {
-            Object[] newArray = new Object[this.elements.length * 2];
-            int newHead = newArray.length / 2 - this.size() / 2;
+        if (this.head <= 1 || this.tail >= this.elements.length - 2) {
 
-            if (this.size() >= 0) System.arraycopy(this.elements, this.head, newArray, newHead, this.size());
-            this.tail = newHead + this.size();
+            Object[] newArray = new Object[this.elements.length * 2];
+
+            int newHead = this.size / 2;
+
+            if (this.size >= 0) System.arraycopy(this.elements, this.head, newArray, newHead, this.size);
+
+            this.tail = newHead + this.size;
             this.head = newHead;
             this.elements = newArray;
         }

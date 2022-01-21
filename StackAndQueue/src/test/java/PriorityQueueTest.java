@@ -2,8 +2,7 @@ import junit.framework.TestCase;
 import org.junit.Assert;
 import org.junit.Test;
 
-import java.util.Arrays;
-import java.util.PriorityQueue;
+import java.util.Iterator;
 
 public class PriorityQueueTest extends TestCase {
     private final int SIZE = 10;
@@ -19,17 +18,12 @@ public class PriorityQueueTest extends TestCase {
     @Test
     public void testOffer() {
         PriorityQueue<Integer> priorityQueue = createPriorityQueue(SIZE);
+        priorityQueue.offer(SIZE / 2);
+        assertEquals(0, (int) priorityQueue.peek());
+        priorityQueue.offer(SIZE + 1);
+        assertEquals(0, (int) priorityQueue.peek());
         priorityQueue.offer(-1);
-        priorityQueue.offer(55);
-        for (Object i : priorityQueue.toArray()) {
-            System.out.print(i + " ");
-        }
-        System.out.println();
-        assertEquals(SIZE - 1, (int) priorityQueue.peek());
-        priorityQueue.offer(5);
-        assertEquals(SIZE - 1, (int) priorityQueue.peek());
-        priorityQueue.offer(11);
-        assertEquals(11, (int) priorityQueue.peek());
+        assertEquals(-1, (int) priorityQueue.peek());
     }
 
     @Test

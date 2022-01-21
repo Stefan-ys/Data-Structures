@@ -66,11 +66,12 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
         if (this.isEmpty()) {
             throw new IllegalStateException();
         }
-        E elements = this.elements.get(0);
-        swap(0, this.elements.size() - 1);
+        E element = this.elements.get(0);
+
+        Collections.swap(this.elements, 0, this.elements.size() - 1);
         this.elements.remove(this.elements.size() - 1);
         this.heapifyDown(0);
-        return elements;
+        return element;
     }
 
     //HELPERS
@@ -91,11 +92,6 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
         return this.elements.get(index1).compareTo(this.elements.get(index2)) > 0;
     }
 
-    private void swap(int index1, int index2) {
-        E tmp = (E) this.elements.get(index1);
-        this.elements.set(index1, this.elements.get(index2));
-        this.elements.set(index2, tmp);
-    }
 
     private void heapifyUp(int index) {
         while (index > 0 && isLess(getParentIndex(index), index)) {
@@ -107,9 +103,9 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
 
 
     private void heapifyDown(int index) {
-        int leftChildIndex = getLeftChild(index);
-        while (leftChildIndex < this.size()) {
-            int child = isLess(index, leftChildIndex) ? leftChildIndex : index;
+        while (getLeftChild(index) < this.size()) {
+            int leftChildIndex = getLeftChild(index);
+            int child = isLess(leftChildIndex, index) ? index : leftChildIndex;
 
             int rightChildIndex = getRightChild(index);
             if (rightChildIndex < this.size() && isLess(child, rightChildIndex)) {
@@ -118,7 +114,7 @@ public class PriorityQueue<E extends Comparable<E>> implements Queue<E> {
             if (index == child) {
                 break;
             }
-            swap(index, child);
+            Collections.swap(this.elements, index, child);
             index = child;
         }
     }
