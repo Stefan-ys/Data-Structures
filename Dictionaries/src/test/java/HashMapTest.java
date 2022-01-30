@@ -1,29 +1,55 @@
-import junit.framework.TestCase;
+import interfaces.Map;
+import org.junit.Assert;
 import org.junit.Test;
 
-class HashMapTest extends TestCase {
+public class HashMapTest {
+    private static final int SIZE = 100;
 
-    @Test
-    void put() {
+    private Map<String, Integer> createMap() {
+        Map<String, Integer> map = new HashMap<>();
+        int testSize = 100;
+        for (int i = 1; i <= testSize; i++) {
+            String str = "Test" + i;
+            map.put(str, i);
+        }
+        return map;
+
     }
 
     @Test
-    void get() {
+    public void put() {
+        Map<String, Integer> map = createMap();
+        for (int i = 1; i <= SIZE; i++) {
+            String str = "Test" + i;
+            Assert.assertTrue(map.containsKey(str));
+            Assert.assertTrue(map.containsValue(i));
+        }
+
     }
 
     @Test
-    void keys() {
+    public void get() {
+        for (int i = 0; i <= SIZE; i++) {
+
+        }
+
     }
 
     @Test
-    void containsKey() {
+    public void keys() {
     }
 
-    @Test
-    void containsValue() {
-    }
 
     @Test
-    void remove() {
+    public void remove() {
+        Map<String, Integer> map = createMap();
+        for (int i = 1; i <= SIZE; i++) {
+            String str = "Test" + i;
+            Assert.assertTrue(map.containsKey(str));
+            map.remove(str);
+            Assert.assertFalse(map.containsValue(i));
+        }
+        Assert.assertTrue(map.isEmpty());
+
     }
 }

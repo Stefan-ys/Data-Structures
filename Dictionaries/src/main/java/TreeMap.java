@@ -20,6 +20,26 @@ public class TreeMap<K, V> implements Map<K, V> {
     }
 
     @Override
+    public Collection<V> values() {
+        return null;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return false;
+    }
+
+    @Override
+    public int size() {
+        return 0;
+    }
+
+    @Override
+    public void clear() {
+
+    }
+
+    @Override
     public boolean containsKey(Object key) {
         return false;
     }

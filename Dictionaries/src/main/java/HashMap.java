@@ -1,5 +1,6 @@
 import interfaces.Map;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
@@ -24,12 +25,11 @@ public class HashMap<K, V> implements Map<K, V> {
     private static class Entry<K, V> {
         private final K key;
         private V value;
-        Entry<K, V> next;
 
-        private Entry(K key, V value, Entry<K, V> next) {
+        private Entry(K key, V value) {
             this.key = key;
             this.value = value;
-            this.next = next;
+
 
         }
     }
@@ -40,9 +40,8 @@ public class HashMap<K, V> implements Map<K, V> {
     @Override
     public void put(K key, V value) {
         growIfNeeded();
-        Entry<K, V> entry = new Entry<>(key, value, null);
+        Entry<K, V> entry = new Entry<>(key, value);
         int bucket = getHash(key) % getBucketSize();
-
         if (this.buckets[bucket] == null) {
             this.buckets[bucket] = new LinkedList<>();
             this.buckets[bucket].add(entry);
@@ -76,7 +75,30 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public Collection<K> keys() {
-        return null;
+        List<K> keys = new ArrayList<>();
+
+        for (List<Entry<K, V>> bucket : buckets) {
+            if (bucket != null) {
+                for (Entry<K, V> entry : bucket) {
+                    keys.add(entry.key);
+                }
+            }
+        }
+        return keys;
+    }
+
+    @Override
+    public Collection<V> values() {
+        List<V> values = new ArrayList<>();
+
+        for (List<Entry<K, V>> bucket : buckets) {
+            if (bucket != null) {
+                for (Entry<K, V> entry : bucket) {
+                    values.add(entry.value);
+                }
+            }
+        }
+        return values;
     }
 
     @Override
@@ -86,7 +108,28 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean containsValue(V value) {
+
+        for (List<Entry<K, V>> current : buckets) {
+            if (current != null) {
+                for (Entry<K, V> entry : current) {
+                    if (entry.value.equals(value)) {
+                        return true;
+                    }
+                }
+
+            }
+        }
         return false;
+    }
+
+    @Override
+    public boolean isEmpty() {
+        return this.size == 0;
+    }
+
+    @Override
+    public int size() {
+        return this.size;
     }
 
     //UPDATE
@@ -95,11 +138,22 @@ public class HashMap<K, V> implements Map<K, V> {
 
     @Override
     public boolean remove(K key) {
-        List<Entry<K, V>> bucket = buckets[getHash(key) % getBucketSize()];
+        List<Entry<K, V>> list = buckets[getHash(key) % getBucketSize()];
+        for (int i = 0; i < list.size(); i++) {
+            if (list.get(i).key.equals(key)) {
+                list.remove(i);
+                this.size--;
+                return true;
+            }
+        }
 
+        return false;
+    }
 
-        this.size--;
-        return true;
+    @Override
+    public void clear() {
+        this.buckets = new LinkedList[INITIAL_CAPACITY];
+        this.size = 0;
     }
 
     //HELPERS
@@ -110,7 +164,7 @@ public class HashMap<K, V> implements Map<K, V> {
     }
 
     private int getHash(K key) {
-        return key.hashCode();
+        return Math.abs(key.hashCode());
     }
 
     private void growIfNeeded() {
