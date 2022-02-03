@@ -2,6 +2,8 @@ import interfaces.Map;
 import org.junit.Assert;
 import org.junit.Test;
 
+import java.util.List;
+
 public class HashMapTest {
     private static final int SIZE = 100;
 
@@ -29,7 +31,11 @@ public class HashMapTest {
 
     @Test
     public void get() {
-        for (int i = 0; i <= SIZE; i++) {
+        Map<String, Integer> map = createMap();
+        for (int i = 1; i <= SIZE; i++) {
+            String str = "Test" + i;
+            int num = map.get(str);
+            Assert.assertEquals(i, num);
 
         }
 
@@ -37,6 +43,13 @@ public class HashMapTest {
 
     @Test
     public void keys() {
+        Map<String, Integer> map = createMap();
+        List<String> keys = (List<String>) map.keys();
+        for (int i = 1; i <= SIZE; i++) {
+            String key = keys.get(i - 1);
+            Assert.assertTrue(keys.contains(key));
+        }
+
     }
 
 
