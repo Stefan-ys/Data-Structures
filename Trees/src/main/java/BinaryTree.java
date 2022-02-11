@@ -1,5 +1,4 @@
 import interfaces.Tree;
-import org.w3c.dom.Node;
 
 import java.util.ArrayDeque;
 import java.util.ArrayList;
@@ -109,6 +108,32 @@ public class BinaryTree<E extends Comparable<E>> implements Tree<E> {
         }
 
         return list;
+    }
+
+    @Override
+    public E minValue() {
+        if (this.root == null) {
+            throw new IllegalArgumentException();
+        }
+        Node<E> node = this.root;
+
+        while (node.leftChild != null) {
+            node = node.leftChild;
+        }
+        return node.element;
+    }
+
+    @Override
+    public E maxValue() {
+        if (this.root == null) {
+            throw new IllegalArgumentException();
+        }
+        Node<E> node = this.root;
+
+        while (node.rightChild != null) {
+            node = node.rightChild;
+        }
+        return node.element;
     }
 
     @Override
