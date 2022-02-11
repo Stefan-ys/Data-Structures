@@ -28,9 +28,16 @@ public class AVLTree<E extends Comparable<E>> implements Tree<E> {
 
     @Override
     public void insert(E element) {
-        insert(this.root, element);
-    }
+        this.size++;
+        if (this.root == null) {
+            this.root = new Node<>(element);
+            return;
+        }
 
+        insert(this.root, element);
+
+
+    }
 
 
     //RETRIEVE
@@ -81,6 +88,32 @@ public class AVLTree<E extends Comparable<E>> implements Tree<E> {
         }
 
         return list;
+    }
+
+    @Override
+    public E minValue() {
+        if (this.root == null) {
+            throw new IllegalArgumentException();
+        }
+        Node<E> node = this.root;
+
+        while (node.leftChild != null) {
+            node = node.leftChild;
+        }
+        return node.element;
+    }
+
+    @Override
+    public E maxValue() {
+        if (this.root == null) {
+            throw new IllegalArgumentException();
+        }
+        Node<E> node = this.root;
+
+        while (node.rightChild != null) {
+            node = node.rightChild;
+        }
+        return node.element;
     }
 
     @Override
@@ -164,6 +197,8 @@ public class AVLTree<E extends Comparable<E>> implements Tree<E> {
             node.leftChild = this.insert(node.leftChild, element);
         } else if (element.compareTo(node.element) > 0) {
             node.rightChild = this.insert(node.rightChild, element);
+        } else {
+            this.size--;
         }
         updateHeight(node);
         node = balance(node);
@@ -191,18 +226,8 @@ public class AVLTree<E extends Comparable<E>> implements Tree<E> {
         return node;
     }
 
+
     private Node<E> leftRotate(Node<E> node) {
-        Node<E> tmp = node.leftChild;
-        node.leftChild = tmp.rightChild;
-        tmp.rightChild = node;
-
-        updateHeight(node);
-        updateHeight(tmp);
-
-        return tmp;
-    }
-
-    private Node<E> rightRotate(Node<E> node) {
         Node<E> tmp = node.rightChild;
         node.rightChild = tmp.leftChild;
         tmp.leftChild = node;
@@ -213,8 +238,19 @@ public class AVLTree<E extends Comparable<E>> implements Tree<E> {
         return tmp;
     }
 
+    private Node<E> rightRotate(Node<E> node) {
+        Node<E> tmp = node.leftChild;
+        node.leftChild = tmp.rightChild;
+        tmp.rightChild = node;
+
+        updateHeight(node);
+        updateHeight(tmp);
+
+        return tmp;
+    }
+
     private void updateHeight(Node<E> node) {
-        node.height = Math.max(height(node.leftChild), height(node.rightChild));
+        node.height = Math.max(height(node.leftChild), height(node.rightChild)) + 1;
     }
 
     private int height(Node<E> node) {
