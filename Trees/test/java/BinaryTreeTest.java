@@ -72,6 +72,20 @@ public class BinaryTreeTest {
         }
     }
 
+    @Test
+    public void testGetMin() {
+        BinaryTree<Integer> binaryTree = createBinaryTree();
+        int min = binaryTree.minValue();
+        Assert.assertEquals(4, min);
+    }
+
+    @Test
+    public void testGetMax() {
+        BinaryTree<Integer> binaryTree = createBinaryTree();
+        int max = binaryTree.maxValue();
+        Assert.assertEquals(90, max);
+    }
+
 
     @Test
     public void testIsEmpty() {
